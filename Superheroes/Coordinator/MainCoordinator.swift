@@ -18,6 +18,8 @@ class MainCoordinator: Coordinator {
             navigateToAddHeroes()
         case .goToHeroesAndAddHeroes(let heroIDs):
             navigateToHeroesWithNewHeroes(heroIDs: heroIDs)
+        case .navigateToHeroDetail(let hero):
+            navigateToHeroDetail(hero: hero)
         }
     }
 
@@ -40,5 +42,14 @@ class MainCoordinator: Coordinator {
         }
         viewController.coordinator = self
         navigationController?.popToViewController(viewController, animated: true)
+    }
+
+    func navigateToHeroDetail(hero: HeroModel) {
+        var viewController: UIViewController & Coordinating = HeroDetailViewController()
+        viewController.coordinator = self
+        navigationController?.pushViewController(viewController, animated: true)
+        guard let vcToSendData = navigationController?.viewControllers.last as? HeroDetailViewController
+        else { return }
+        vcToSendData.hero = hero
     }
 }
