@@ -17,7 +17,6 @@ class HeroesViewController: UIViewController, Coordinating {
 
     @IBOutlet weak var heroesTableView: UITableView!
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
@@ -32,9 +31,14 @@ class HeroesViewController: UIViewController, Coordinating {
                                                                 target: self,
                                                                 action: #selector(goToAddHeroes))
         self.navigationItem.leftBarButtonItem?.tintColor = .darkGray
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash,
+                                                                 target: self,
+                                                                 action: #selector(deleteHeroes))
+        self.navigationItem.rightBarButtonItem?.tintColor = .darkGray
     }
 
     func bindTableView() {
+        heroesTableView.delegate = self
         heroesTableView.register(UINib(nibName: "HeroesTableViewCell", bundle: nil), forCellReuseIdentifier: "HeroCell")
         heroesVM.heroList.bind(to: heroesTableView.rx.items(cellIdentifier: "HeroCell",
                                                             cellType: HeroesTableViewCell.self)) { _, element, cell in
@@ -42,10 +46,38 @@ class HeroesViewController: UIViewController, Coordinating {
                            heroName: element.name,
                            heroFullName: element.biography.fullName)
         } ~ disposeBag
+
+        heroesTableView.rx.itemSelected.subscribe(onNext: { [weak self] index in
+            guard let self = self else { return }
+            self.coordinator?.eventOccured(with: .navigateToHeroDetail(self.heroesVM.heroList.value[index.row]))
+        }) ~ disposeBag
     }
 
     @objc func goToAddHeroes() {
         coordinator?.eventOccured(with: .navigateToAddHeroes)
     }
 
+    @objc func deleteHeroes() {
+        let alert = UIAlertController(title: "Are you sure you want to delete all heroes?",
+                                      message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { [weak self] _ in
+            self?.heroesVM.status.performAction(with: .clearHeroes)
+        }))
+        alert.addAction(UIAlertAction(title: "No", style: .default))
+        self.present(alert, animated: true)
+    }
+
+}
+
+extension HeroesViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .destructive, title: "") { [weak self] _, _, _ in
+            self?.heroesVM.status.performAction(with: .removeHero(indexPath.row))
+        }
+        action.backgroundColor = .systemBackground
+        action.image = UIImage(systemName: "trash")?.colored(in: .red)
+        let swipe = UISwipeActionsConfiguration(actions: [action])
+        return swipe
+    }
 }

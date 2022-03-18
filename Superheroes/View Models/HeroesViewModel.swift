@@ -14,7 +14,7 @@ class HeroesViewModel {
     let disposeBag = DisposeBag()
     let heroesToAdd = PublishSubject<Int>()
     let heroList = BehaviorRelay<[HeroModel]>(value: [])
-
+    let status = Status()
 }
 
 extension HeroesViewModel {
@@ -34,5 +34,37 @@ extension HeroesViewModel {
                 }) ~ self.disposeBag
             }) ~ self.disposeBag
         }) ~ disposeBag
+
+        status.clearAction
+            .subscribe(onNext: { [weak self] _ in
+                self?.heroList.accept([])
+            }) ~ disposeBag
+
+        status.removeHero.subscribe(onNext: { [weak self] index in
+            guard let self = self else { return }
+            var heroes = self.heroList.value
+            heroes.remove(at: index)
+            self.heroList.accept(heroes)
+        }) ~ disposeBag
     }
+}
+
+struct Status {
+
+    let clearAction = PublishSubject<Void>()
+    let removeHero = PublishSubject<Int>()
+
+    func performAction(with action: Action) {
+        switch action {
+        case .clearHeroes:
+            clearAction.onNext(())
+        case .removeHero(let index):
+            removeHero.onNext(index)
+        }
+    }
+}
+
+enum Action {
+    case clearHeroes
+    case removeHero(Int)
 }
