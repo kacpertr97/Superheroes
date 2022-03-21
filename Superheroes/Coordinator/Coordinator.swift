@@ -19,6 +19,7 @@ enum Event {
     case navigateToAddHeroes
     case goToHeroesAndAddHeroes([Int])
     case navigateToHeroDetail(HeroModel)
+    case goToHeroAndDeleteHero
 }
 
 protocol Coordinating {

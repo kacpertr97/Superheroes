@@ -6,10 +6,6 @@
 //  swiftlint:disable identifier_name
 
 import Foundation
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
-//
-//   let heroModel = try? newJSONDecoder().decode(HeroModel.self, from: jsonData)
 
 // MARK: - HeroModel
 struct HeroModel: Codable {

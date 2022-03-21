@@ -20,6 +20,8 @@ class MainCoordinator: Coordinator {
             navigateToHeroesWithNewHeroes(heroIDs: heroIDs)
         case .navigateToHeroDetail(let hero):
             navigateToHeroDetail(hero: hero)
+        case .goToHeroAndDeleteHero:
+            gotoHeroAndDeleteHero()
         }
     }
 
@@ -51,5 +53,13 @@ class MainCoordinator: Coordinator {
         guard let vcToSendData = navigationController?.viewControllers.last as? HeroDetailViewController
         else { return }
         vcToSendData.hero = hero
+    }
+
+    func gotoHeroAndDeleteHero() {
+        guard let viewController = navigationController?.viewControllers.first as? HeroesViewController else { return }
+        viewController.coordinator = self
+        navigationController?.popToViewController(viewController, animated: true)
+        guard let index = viewController.heroesVM.lastSelectedCell else { return }
+        viewController.heroesVM.status.performAction(with: .removeHero(index))
     }
 }
