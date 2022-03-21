@@ -26,12 +26,16 @@ extension HeroesViewModel {
             guard let url = URL(string: "https://www.superheroapi.com/api.php/6781182295287025/\(heroID)")
             else { return }
             let resource = Resource<HeroModel>(url: url)
-            Webservices.fetchData(resource: resource).subscribe(onNext: { hero in
+            Webservices.fetchData(resource: resource)
+                .subscribe(onNext: { hero in
                 guard let fetchImg = Webservices.fetchImg(url: hero.image.url) else { return }
-                fetchImg.subscribe(onNext: { imgData in
+                fetchImg
+                    .observe(on: MainScheduler.instance)
+                    .subscribe(onNext: { imgData in
                     var hero = hero
                     hero.imageData = imgData
                     self.heroList.accept(self.heroList.value + [hero])
+                    self.status.performAction(with: .save(hero: hero))
                 }) ~ self.disposeBag
             }) ~ self.disposeBag
         }) ~ disposeBag
@@ -39,17 +43,19 @@ extension HeroesViewModel {
         status.clearAction
             .subscribe(onNext: { [weak self] _ in
                 self?.heroList.accept([])
+                CoreDataServices.clearCoreData()
             }) ~ disposeBag
 
         status.removeHero.subscribe(onNext: { [weak self] index in
             guard let self = self else { return }
             var heroes = self.heroList.value
+            CoreDataServices.removeSingleHero(heroName: heroes[index].name)
             heroes.remove(at: index)
             self.heroList.accept(heroes)
         }) ~ disposeBag
 
-        status.save.subscribe(onNext: {
-            CoreDataServices.saveDataToCoreData(heroes: self.heroList.value)
+        status.save.subscribe(onNext: { hero in
+            CoreDataServices.saveDataToCoreData(hero: hero)
         }) ~ disposeBag
 
         status.read.subscribe(onNext: {
@@ -66,7 +72,7 @@ struct Status {
 
     let clearAction = PublishSubject<Void>()
     let removeHero = PublishSubject<Int>()
-    let save = PublishSubject<Void>()
+    let save = PublishSubject<HeroModel>()
     let read = PublishSubject<Void>()
 
     func performAction(with action: Action) {
@@ -75,10 +81,10 @@ struct Status {
             clearAction.onNext(())
         case .removeHero(let index):
             removeHero.onNext(index)
-        case .save:
-            save.onNext(())
+        case .save(let hero):
+            save.onNext((hero))
         case .read:
-                read.onNext(())
+            read.onNext(())
         }
     }
 }
@@ -86,6 +92,6 @@ struct Status {
 enum Action {
     case clearHeroes
     case removeHero(Int)
-    case save
+    case save(hero: HeroModel)
     case read
 }
