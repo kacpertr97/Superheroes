@@ -1,4 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21D62" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="HeroCoreData" representedClassName="HeroCoreData" syncable="YES" codeGenerationType="class">
+        <attribute name="aliases" optional="YES" attributeType="String"/>
+        <attribute name="alignment" optional="YES" attributeType="String"/>
+        <attribute name="alterEgos" optional="YES" attributeType="String"/>
+        <attribute name="base" optional="YES" attributeType="String"/>
+        <attribute name="cmtStat" optional="YES" attributeType="String"/>
+        <attribute name="drbStat" optional="YES" attributeType="String"/>
+        <attribute name="eyeColor" optional="YES" attributeType="String"/>
+        <attribute name="firstAppearance" optional="YES" attributeType="String"/>
+        <attribute name="gender" optional="YES" attributeType="String"/>
+        <attribute name="groupAffiliation" optional="YES" attributeType="String"/>
+        <attribute name="hairColor" optional="YES" attributeType="String"/>
+        <attribute name="height" optional="YES" attributeType="String"/>
+        <attribute name="heroFullName" optional="YES" attributeType="String"/>
+        <attribute name="heroID" optional="YES" attributeType="String"/>
+        <attribute name="heroName" optional="YES" attributeType="String"/>
+        <attribute name="imgData" optional="YES" attributeType="Binary"/>
+        <attribute name="imgUrl" optional="YES" attributeType="String"/>
+        <attribute name="intStat" optional="YES" attributeType="String"/>
+        <attribute name="occupation" optional="YES" attributeType="String"/>
+        <attribute name="placeOfBirth" optional="YES" attributeType="String"/>
+        <attribute name="publisher" optional="YES" attributeType="String"/>
+        <attribute name="pwrStat" optional="YES" attributeType="String"/>
+        <attribute name="race" optional="YES" attributeType="String"/>
+        <attribute name="relatives" optional="YES" attributeType="String"/>
+        <attribute name="spdStat" optional="YES" attributeType="String"/>
+        <attribute name="strStat" optional="YES" attributeType="String"/>
+        <attribute name="weight" optional="YES" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="HeroCoreData" positionX="-63" positionY="-18" width="128" height="434"/>
+    </elements>
 </model>

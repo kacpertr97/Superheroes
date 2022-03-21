@@ -49,7 +49,14 @@ extension HeroesViewModel {
         }) ~ disposeBag
 
         status.save.subscribe(onNext: {
-            print("dziala")
+            CoreDataServices.saveDataToCoreData(heroes: self.heroList.value)
+        }) ~ disposeBag
+
+        status.read.subscribe(onNext: {
+            CoreDataServices.readDataFromCoreData()?.subscribe(onNext: { [weak self] heroes in
+                guard let self = self else { return }
+                self.heroList.accept(heroes)
+            }).disposed(by: self.disposeBag)
         }) ~ disposeBag
 
     }
@@ -60,6 +67,7 @@ struct Status {
     let clearAction = PublishSubject<Void>()
     let removeHero = PublishSubject<Int>()
     let save = PublishSubject<Void>()
+    let read = PublishSubject<Void>()
 
     func performAction(with action: Action) {
         switch action {
@@ -69,6 +77,8 @@ struct Status {
             removeHero.onNext(index)
         case .save:
             save.onNext(())
+        case .read:
+                read.onNext(())
         }
     }
 }
@@ -77,4 +87,5 @@ enum Action {
     case clearHeroes
     case removeHero(Int)
     case save
+    case read
 }

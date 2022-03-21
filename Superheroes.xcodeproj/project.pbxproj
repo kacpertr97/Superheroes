@@ -16,6 +16,7 @@
 		E700A10727E4A21700D26ABC /* UIImage+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E700A10627E4A21700D26ABC /* UIImage+extension.swift */; };
 		E700A10B27E4A41800D26ABC /* HeroDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E700A10927E4A41800D26ABC /* HeroDetailViewController.swift */; };
 		E700A10C27E4A41800D26ABC /* HeroDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E700A10A27E4A41800D26ABC /* HeroDetailViewController.xib */; };
+		E72A4A7427E8FDEC0064E996 /* CoreDataServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72A4A7327E8FDEC0064E996 /* CoreDataServices.swift */; };
 		E77049AE27E148A80061A8E2 /* AddHeroViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77049AD27E148A80061A8E2 /* AddHeroViewModel.swift */; };
 		E77049B127E148BD0061A8E2 /* FullHeroList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77049B027E148BD0061A8E2 /* FullHeroList.swift */; };
 		E78D6C3027E0B13A002BFA52 /* AddHeroesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78D6C2E27E0B13A002BFA52 /* AddHeroesViewController.swift */; };
@@ -44,6 +45,7 @@
 		E700A10627E4A21700D26ABC /* UIImage+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+extension.swift"; sourceTree = "<group>"; };
 		E700A10927E4A41800D26ABC /* HeroDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroDetailViewController.swift; sourceTree = "<group>"; };
 		E700A10A27E4A41800D26ABC /* HeroDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeroDetailViewController.xib; sourceTree = "<group>"; };
+		E72A4A7327E8FDEC0064E996 /* CoreDataServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataServices.swift; sourceTree = "<group>"; };
 		E77049AD27E148A80061A8E2 /* AddHeroViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHeroViewModel.swift; sourceTree = "<group>"; };
 		E77049B027E148BD0061A8E2 /* FullHeroList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullHeroList.swift; sourceTree = "<group>"; };
 		E78D6C2E27E0B13A002BFA52 /* AddHeroesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHeroesViewController.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				E700A0FE27E47A4100D26ABC /* Webservices.swift */,
+				E72A4A7327E8FDEC0064E996 /* CoreDataServices.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -379,6 +382,7 @@
 				E77049B127E148BD0061A8E2 /* FullHeroList.swift in Sources */,
 				E700A10B27E4A41800D26ABC /* HeroDetailViewController.swift in Sources */,
 				E7DC21D127E0A98B009BF157 /* AppDelegate.swift in Sources */,
+				E72A4A7427E8FDEC0064E996 /* CoreDataServices.swift in Sources */,
 				E700A10427E47FFD00D26ABC /* HeroesTableViewCell.swift in Sources */,
 				E700A0FF27E47A4100D26ABC /* Webservices.swift in Sources */,
 				E7DC21D327E0A98B009BF157 /* SceneDelegate.swift in Sources */,

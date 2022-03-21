@@ -21,6 +21,7 @@ class HeroesViewController: UIViewController, Coordinating {
         super.viewDidLoad()
         setupNavBar()
         heroesVM.performBindings()
+        heroesVM.status.performAction(with: .read)
         bindTableView()
     }
 
