@@ -24,7 +24,7 @@ class HeroesViewController: UIViewController, Coordinating {
         bindTableView()
     }
 
-    func setupNavBar() {
+    private func setupNavBar() {
         self.title = "Heroes"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Add Heroes",
                                                                 style: .plain,
@@ -37,7 +37,7 @@ class HeroesViewController: UIViewController, Coordinating {
         self.navigationItem.rightBarButtonItem?.tintColor = .darkGray
     }
 
-    func bindTableView() {
+    private func bindTableView() {
         heroesTableView.delegate = self
         heroesTableView.register(UINib(nibName: "HeroesTableViewCell", bundle: nil), forCellReuseIdentifier: "HeroCell")
         heroesVM.heroList.bind(to: heroesTableView.rx.items(cellIdentifier: "HeroCell",
@@ -49,6 +49,7 @@ class HeroesViewController: UIViewController, Coordinating {
 
         heroesTableView.rx.itemSelected.subscribe(onNext: { [weak self] index in
             guard let self = self else { return }
+            self.heroesVM.lastSelectedCell = index.row
             self.coordinator?.eventOccured(with: .navigateToHeroDetail(self.heroesVM.heroList.value[index.row]))
         }) ~ disposeBag
     }

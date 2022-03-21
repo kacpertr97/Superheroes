@@ -11,10 +11,11 @@ import RxCocoa
 import RxBinding
 
 class HeroesViewModel {
-    let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     let heroesToAdd = PublishSubject<Int>()
     let heroList = BehaviorRelay<[HeroModel]>(value: [])
     let status = Status()
+    var lastSelectedCell: Int?
 }
 
 extension HeroesViewModel {
@@ -46,6 +47,11 @@ extension HeroesViewModel {
             heroes.remove(at: index)
             self.heroList.accept(heroes)
         }) ~ disposeBag
+
+        status.save.subscribe(onNext: {
+            print("dziala")
+        }) ~ disposeBag
+
     }
 }
 
@@ -53,6 +59,7 @@ struct Status {
 
     let clearAction = PublishSubject<Void>()
     let removeHero = PublishSubject<Int>()
+    let save = PublishSubject<Void>()
 
     func performAction(with action: Action) {
         switch action {
@@ -60,6 +67,8 @@ struct Status {
             clearAction.onNext(())
         case .removeHero(let index):
             removeHero.onNext(index)
+        case .save:
+            save.onNext(())
         }
     }
 }
@@ -67,4 +76,5 @@ struct Status {
 enum Action {
     case clearHeroes
     case removeHero(Int)
+    case save
 }
