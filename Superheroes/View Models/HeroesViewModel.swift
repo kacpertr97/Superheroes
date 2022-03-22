@@ -3,7 +3,6 @@
 //  Superheroes
 //
 //  Created by Kacper Trębacz on 18/03/2022.
-//
 
 import Foundation
 import RxSwift
@@ -27,19 +26,34 @@ extension HeroesViewModel {
             else { return }
             let resource = Resource<HeroModel>(url: url)
             Webservices.fetchData(resource: resource)
-                .subscribe(onNext: { hero in
-                guard let fetchImg = Webservices.fetchImg(url: hero.image.url) else { return }
-                fetchImg
-                    .observe(on: MainScheduler.instance)
-                    .subscribe(onNext: { imgData in
-                    var hero = hero
-                    hero.imageData = imgData
-                    self.heroList.accept(self.heroList.value + [hero])
-                    self.status.performAction(with: .save(hero: hero))
+                .subscribe(onNext: { result in
+                    if case let .failure(error) = result, let err = error as? ErrorType {
+                        self.status.performAction(with: .error(err.returnMessage))
+                    } else if case let .success(hero) = result {
+                        guard let fetchImg = Webservices.fetchImg(url: hero.image.url) else { return }
+                        fetchImg
+                            .observe(on: MainScheduler.instance)
+                            .subscribe(onNext: { imgData in
+                                var hero = hero
+                                hero.imageData = imgData
+                                self.heroList.accept(self.heroList.value + [hero])
+                                let result = CoreDataServices.saveDataToCoreData(hero: hero)
+                                if case let .failure(err) = result, let err = err as? ErrorType {
+                                    self.status.error.onNext(err.returnMessage)
+                                }
+                            }, onError: { err in
+                                self.status.performAction(with: .error(err.localizedDescription))
+                            }) ~ self.disposeBag
+                    }
+                }, onError: { err in
+                    self.status.performAction(with: .error(err.localizedDescription))
                 }) ~ self.disposeBag
-            }) ~ self.disposeBag
         }) ~ disposeBag
 
+        moreBindings()
+    }
+
+    func moreBindings() {
         status.clearAction
             .subscribe(onNext: { [weak self] _ in
                 self?.heroList.accept([])
@@ -54,17 +68,23 @@ extension HeroesViewModel {
             self.heroList.accept(heroes)
         }) ~ disposeBag
 
-        status.save.subscribe(onNext: { hero in
-            CoreDataServices.saveDataToCoreData(hero: hero)
+        status.save.subscribe(onNext: { [weak self] hero in
+            let result = CoreDataServices.saveDataToCoreData(hero: hero)
+            if case let .failure(error) = result, let err = error as? ErrorType {
+                self?.status.performAction(with: .error(err.returnMessage))
+            }
         }) ~ disposeBag
 
         status.read.subscribe(onNext: {
-            CoreDataServices.readDataFromCoreData()?.subscribe(onNext: { [weak self] heroes in
+            CoreDataServices.readDataFromCoreData().subscribe(onNext: { [weak self] result in
                 guard let self = self else { return }
-                self.heroList.accept(heroes)
+                if case let .failure(err) = result, let error = err as? ErrorType {
+                    print(error.returnMessage)
+                } else if case let .success(heroes) = result {
+                    self.heroList.accept(heroes)
+                }
             }).disposed(by: self.disposeBag)
         }) ~ disposeBag
-
     }
 }
 
@@ -74,6 +94,7 @@ struct Status {
     let removeHero = PublishSubject<Int>()
     let save = PublishSubject<HeroModel>()
     let read = PublishSubject<Void>()
+    let error = PublishSubject<String>()
 
     func performAction(with action: Action) {
         switch action {
@@ -85,6 +106,8 @@ struct Status {
             save.onNext((hero))
         case .read:
             read.onNext(())
+        case .error(let err):
+            error.onNext(err)
         }
     }
 }
@@ -94,4 +117,5 @@ enum Action {
     case removeHero(Int)
     case save(hero: HeroModel)
     case read
+    case error(String)
 }

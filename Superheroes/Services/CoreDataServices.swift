@@ -12,9 +12,9 @@ import RxSwift
 
 enum CoreDataServices {
 
-    static func saveDataToCoreData(hero: HeroModel) {
+    static func saveDataToCoreData(hero: HeroModel) -> Result<Void> {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate
-        else { return }
+        else { return Result.failure(ErrorType.errorSavingData) }
         let managedContext = appDelegate.persistentContainer.viewContext
         let entity = NSEntityDescription.entity(forEntityName: "HeroCoreData",
                                                 in: managedContext)!
@@ -50,16 +50,16 @@ enum CoreDataServices {
         heroObject.setValue(hero.biography.aliases.joined(separator: ", "), forKey: "aliases")
         do {
             try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
+        } catch {
+            return Result.failure(ErrorType.errorSavingData)
         }
 
-        
+        return Result.success(())
     }
 
-    static func readDataFromCoreData() -> Observable<[HeroModel]>? {
+    static func readDataFromCoreData() -> Observable<Result<[HeroModel]>> {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate
-        else { return nil }
+        else { return Observable.just(Result.failure(ErrorType.errorFetchingData))}
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "HeroCoreData")
         var heroesToReturn = [HeroModel]()
@@ -103,9 +103,9 @@ enum CoreDataServices {
                 heroesToReturn.append(heroToAppend)
             })
         } catch {
-            print("Could not fetch. \(error), \(error.localizedDescription)")
+           return Observable.just(Result.failure(ErrorType.errorFetchingData))
         }
-        return Observable.just(heroesToReturn)
+        return Observable.just(Result.success(heroesToReturn))
     }
 
     static func clearCoreData() {

@@ -23,6 +23,7 @@ class HeroesViewController: UIViewController, Coordinating {
         heroesVM.performBindings()
         heroesVM.status.performAction(with: .read)
         bindTableView()
+        bindError()
     }
 
     private func setupNavBar() {
@@ -67,6 +68,14 @@ class HeroesViewController: UIViewController, Coordinating {
         }))
         alert.addAction(UIAlertAction(title: "No", style: .default))
         self.present(alert, animated: true)
+    }
+
+    func bindError() {
+        heroesVM.status.error.subscribe(onNext: { err in
+            let alert = UIAlertController(title: "Oops!", message: err, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(alert, animated: true)
+        }) ~ disposeBag
     }
 
 }
