@@ -13,16 +13,22 @@ struct Resource<T> {
 }
 
 enum Webservices {
-    static func fetchData<T: Codable>(resource: Resource<T>) -> Observable<T> {
+    static func fetchData<T: Codable>(resource: Resource<T>) -> Observable<Result<T>> {
         let request = URLRequest(url: resource.url)
         return URLSession.shared.rx.data(request: request)
             .map { data in
-                try JSONDecoder().decode(T.self, from: data)
+                do {
+                    let obj = try JSONDecoder().decode(T.self, from: data)
+                    return Result.success(obj)
+                } catch {
+                    return Result.failure(ErrorType.errorDownloadingData)
+                }
             }.observe(on: MainScheduler.asyncInstance)
     }
 
     static func fetchImg(url: String) -> Observable<Data>? {
-        guard let url = URL(string: url) else { return nil }
+        guard let url = URL(string: url)
+        else { return nil }
         let request = URLRequest(url: url)
         return URLSession.shared.rx.data(request: request)
     }
